@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create an account on TaskFlow - Modern task management app">
+  <title>Create Account - TaskFlow</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-bg-glow"></div>
+
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="/" class="auth-brand">
+          <div class="brand-icon">✓</div>
+          <span class="brand-logo" style="margin: 0;">TaskFlow</span>
+        </a>
+        <h1>Create Account</h1>
+        <p class="auth-subtitle">Join TaskFlow and take charge of your productivity</p>
+      </div>
+
+      <div id="auth-alert" class="auth-banner-alert"></div>
+
+      <!-- Registration Form -->
+      <form id="register-form" class="auth-form">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="form-input" placeholder="Sarah Connor" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <input type="email" id="reg-email" class="form-input" placeholder="sarah@example.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password (min 6 characters)</label>
+          <input type="password" id="reg-password" class="form-input" placeholder="••••••••" minlength="6" required autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-confirm-password">Confirm Password</label>
+          <input type="password" id="reg-confirm-password" class="form-input" placeholder="••••••••" minlength="6" required autocomplete="new-password">
+        </div>
+
+        <button type="submit" id="reg-btn" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+          Get Started
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="/login.html">Sign in here</a>
+      </div>
+
+      <div style="display: flex; justify-content: center; margin-top: 1.5rem;">
+        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Theme" type="button">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.redirectIfAuthenticated();
+
+      const form = document.getElementById('register-form');
+      const alertBox = document.getElementById('auth-alert');
+      const submitBtn = document.getElementById('reg-btn');
+
+      function showAlert(msg, isError = true) {
+        alertBox.textContent = msg;
+        alertBox.className = `auth-banner-alert show ${isError ? 'error' : 'success'}`;
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertBox.className = 'auth-banner-alert';
+
+        const name = document.getElementById('reg-name').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+        const confirmPass = document.getElementById('reg-confirm-password').value;
+
+        if (password !== confirmPass) {
+          showAlert('Passwords do not match. Please verify.');
+          return;
+        }
+
+        if (password.length < 6) {
+          showAlert('Password must contain at least 6 characters.');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating account...';
+
+        try {
+          const result = await Auth.register(email, password, name);
+          
+          if (result.session) {
+            showAlert('Account created successfully! Redirecting...', false);
+            setTimeout(() => {
+              window.location.href = '/dashboard.html';
+            }, 600);
+          } else {
+            showAlert('Account created! Please check your email to verify your address, then sign in.', false);
+            submitBtn.textContent = 'Verification Sent';
+            setTimeout(() => {
+              window.location.href = '/login.html';
+            }, 3000);
+          }
+        } catch (err) {
+          showAlert(err.message || 'Registration failed. Please check your information and try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Get Started';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

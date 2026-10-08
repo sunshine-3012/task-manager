@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TaskFlow - Modern, responsive full-stack task management application">
+  <title>TaskFlow - Modern Task & Productivity Manager</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .hero-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      padding: 0 1.5rem;
+    }
+
+    .landing-nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      margin: 3rem auto;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] .hero-title {
+      background: linear-gradient(135deg, #0f172a 30%, #475569 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 650px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 3rem auto 5rem;
+      z-index: 10;
+    }
+
+    .feature-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+      transition: all var(--transition-base);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-strong);
+    }
+
+    .feature-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .landing-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 2rem 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-section">
+    <div class="auth-bg-glow"></div>
+
+    <nav class="landing-nav">
+      <a href="/" class="brand-logo">
+        <div class="brand-icon">✓</div>
+        <span>TaskFlow</span>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Theme" type="button">
+        </button>
+        <a href="/login.html" class="btn btn-secondary btn-sm">Sign In</a>
+        <a href="/register.html" class="btn btn-primary btn-sm">Get Started</a>
+      </div>
+    </nav>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>⚡ Built with Node.js, Express & Supabase</span>
+      </div>
+      <h1 class="hero-title">Organize your work,<br>supercharge your flow.</h1>
+      <p class="hero-description">
+        Experience a fast, responsive, and secure task manager. Organize by priority, track due dates, and monitor productivity with real-time statistics.
+      </p>
+
+      <div class="hero-cta">
+        <a href="/register.html" class="btn btn-primary" style="padding: 0.85rem 1.85rem; font-size: 1rem;">
+          Get Started Free
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a href="/login.html" class="btn btn-secondary" style="padding: 0.85rem 1.85rem; font-size: 1rem;">
+          Open Dashboard
+        </a>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+        </div>
+        <h3>Smart Task Management</h3>
+        <p>Prioritize by Low, Medium, High, and Urgent. Tag items with customizable categories and clear deadlines.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-box" style="background: rgba(16, 185, 129, 0.12); color: var(--success);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </div>
+        <h3>Productivity Analytics</h3>
+        <p>Visualize completed tasks, pending rates, and a 7-day productivity bar chart to keep momentum high.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-box" style="background: rgba(139, 92, 246, 0.12); color: var(--secondary);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h3>Row Level Security (RLS)</h3>
+        <p>Powered by Supabase Auth and PostgreSQL RLS. Your tasks and categories are private and accessible only by you.</p>
+      </div>
+    </div>
+
+    <footer class="landing-footer">
+      <p>&copy; 2026 TaskFlow. Built with HTML5, CSS3, Vanilla JS, Node.js, Express & Supabase.</p>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const client = await getSupabase();
+      if (client) {
+        const { data: { session } } = await client.auth.getSession();
+        if (session) {
+          window.location.href = '/dashboard.html';
+        }
+      }
+
+      const themeBtn = document.getElementById('theme-toggle-btn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => toggleTheme());
+      }
+    });
+  </script>
+</body>
+</html>

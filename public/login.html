@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign in to your TaskFlow account - Modern full-stack task manager">
+  <title>Sign In - TaskFlow</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-bg-glow"></div>
+
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="/" class="auth-brand">
+          <div class="brand-icon">✓</div>
+          <span class="brand-logo" style="margin: 0;">TaskFlow</span>
+        </a>
+        <h1>Welcome Back</h1>
+        <p class="auth-subtitle">Sign in to manage your tasks and stay productive</p>
+      </div>
+
+      <div id="auth-alert" class="auth-banner-alert"></div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="form-input" placeholder="you@company.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label" for="login-password">Password</label>
+            <a href="#" id="forgot-password-link" style="font-size: 0.8rem;">Forgot password?</a>
+          </div>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" id="login-btn" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+          Sign In
+        </button>
+      </form>
+
+      <!-- Forgot Password Form (Hidden by default) -->
+      <form id="reset-form" class="auth-form" style="display: none;">
+        <div class="form-group">
+          <label class="form-label" for="reset-email">Email Address</label>
+          <input type="email" id="reset-email" class="form-input" placeholder="Enter your registered email" required>
+        </div>
+
+        <button type="submit" id="reset-btn" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+          Send Reset Instructions
+        </button>
+
+        <button type="button" id="back-to-login-btn" class="btn btn-secondary" style="width: 100%;">
+          Back to Login
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account yet? <a href="/register.html">Create one now</a>
+      </div>
+
+      <div style="display: flex; justify-content: center; margin-top: 1.5rem;">
+        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Theme" type="button">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.redirectIfAuthenticated();
+
+      const loginForm = document.getElementById('login-form');
+      const resetForm = document.getElementById('reset-form');
+      const forgotLink = document.getElementById('forgot-password-link');
+      const backToLoginBtn = document.getElementById('back-to-login-btn');
+      const alertBox = document.getElementById('auth-alert');
+      const loginBtn = document.getElementById('login-btn');
+      const resetBtn = document.getElementById('reset-btn');
+
+      function showAlert(msg, isError = true) {
+        alertBox.textContent = msg;
+        alertBox.className = `auth-banner-alert show ${isError ? 'error' : 'success'}`;
+      }
+
+      function clearAlert() {
+        alertBox.className = 'auth-banner-alert';
+        alertBox.textContent = '';
+      }
+
+      forgotLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearAlert();
+        loginForm.style.display = 'none';
+        resetForm.style.display = 'flex';
+        document.querySelector('.auth-subtitle').textContent = 'Enter your email to receive a password reset link';
+      });
+
+      backToLoginBtn.addEventListener('click', () => {
+        clearAlert();
+        resetForm.style.display = 'none';
+        loginForm.style.display = 'flex';
+        document.querySelector('.auth-subtitle').textContent = 'Sign in to manage your tasks and stay productive';
+      });
+
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAlert();
+
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Signing in...';
+
+        try {
+          await Auth.login(email, password);
+          showAlert('Login successful! Redirecting...', false);
+          setTimeout(() => {
+            window.location.href = '/dashboard.html';
+          }, 400);
+        } catch (err) {
+          showAlert(err.message || 'Invalid email or password. Please try again.');
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Sign In';
+        }
+      });
+
+      resetForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAlert();
+
+        const email = document.getElementById('reset-email').value.trim();
+        resetBtn.disabled = true;
+        resetBtn.textContent = 'Sending link...';
+
+        try {
+          await Auth.resetPassword(email);
+          showAlert('Password reset link sent! Please check your email inbox.', false);
+        } catch (err) {
+          showAlert(err.message || 'Unable to send password reset email.');
+        } finally {
+          resetBtn.disabled = false;
+          resetBtn.textContent = 'Send Reset Instructions';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
