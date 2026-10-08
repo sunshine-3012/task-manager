@@ -36,7 +36,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    supabaseConfigured: Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'your_supabase_anon_key_here')
+    supabaseConfigured: Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
   });
 });
 
@@ -76,10 +76,15 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`\n==================================================`);
-  console.log(`🚀 Task Manager Server running on: http://localhost:${PORT}`);
-  console.log(`📁 Frontend served from: public/`);
-  console.log(`🔗 API Base: http://localhost:${PORT}/api`);
-  console.log(`==================================================\n`);
-});
+// Start listener when running locally or directly
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n==================================================`);
+    console.log(`🚀 Task Manager Server running on: http://localhost:${PORT}`);
+    console.log(`📁 Frontend served from: public/`);
+    console.log(`🔗 API Base: http://localhost:${PORT}/api`);
+    console.log(`==================================================\n`);
+  });
+}
+
+module.exports = app;

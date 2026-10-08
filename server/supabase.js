@@ -1,16 +1,16 @@
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const DEFAULT_SUPABASE_URL = 'https://trngsyiefgsglysdawld.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybmdzeWllZmdzZ2x5c2Rhd2xkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0NTMxMzYsImV4cCI6MjEwNzAyOTEzNn0.5RvR69SzsLmhX8Tmij-EtJTEivIHclBmvLfyttlqXAI';
+const DEFAULT_SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybmdzeWllZmdzZ2x5c2Rhd2xkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTQ1MzEzNiwiZXhwIjoyMTA3MDI5MTM2fQ.T2SbeeWIe79pyMncq6KVzMrIZB1ZC_yxsHwFtsQ9zZc';
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.warn('\x1b[33m%s\x1b[0m', '⚠️  Warning: SUPABASE_URL and SUPABASE_ANON_KEY are not set in .env. Please configure them to connect to your Supabase project.');
-}
+const SUPABASE_URL = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || DEFAULT_SUPABASE_SERVICE_ROLE_KEY;
 
 // Base Supabase client with Anon Key
-const supabaseClient = createClient(SUPABASE_URL || 'https://placeholder.supabase.co', SUPABASE_ANON_KEY || 'placeholder');
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Admin Supabase client with Service Role Key (Server-side only)
 const adminSupabase = SUPABASE_SERVICE_ROLE_KEY

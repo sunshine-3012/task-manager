@@ -2,8 +2,33 @@
  * TaskFlow Configuration & Supabase Initialization Module
  */
 
+const DEFAULT_SUPABASE_URL = 'https://trngsyiefgsglysdawld.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybmdzeWllZmdzZ2x5c2Rhd2xkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0NTMxMzYsImV4cCI6MjEwNzAyOTEzNn0.5RvR69SzsLmhX8Tmij-EtJTEivIHclBmvLfyttlqXAI';
+
 let supabaseInstance = null;
 let configPromise = null;
+
+/**
+ * Ensures window.supabase is available from CDN
+ */
+async function waitForSupabaseLibrary() {
+  if (window.supabase) return true;
+
+  // Poll for up to 3 seconds in case CDN script is still loading
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 100));
+    if (window.supabase) return true;
+  }
+
+  // Fallback: Dynamically inject unpkg CDN if jsdelivr was blocked
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@supabase/supabase-js@2';
+    script.onload = () => resolve(Boolean(window.supabase));
+    script.onerror = () => resolve(false);
+    document.head.appendChild(script);
+  });
+}
 
 /**
  * Initializes and retrieves the Supabase client
@@ -14,12 +39,26 @@ async function getSupabase() {
   if (!configPromise) {
     configPromise = (async () => {
       try {
-        const res = await fetch('/api/config');
-        const config = await res.json();
+        let supabaseUrl = DEFAULT_SUPABASE_URL;
+        let supabaseAnonKey = DEFAULT_SUPABASE_ANON_KEY;
 
-        let supabaseUrl = config.supabaseUrl;
-        let supabaseAnonKey = config.supabaseAnonKey;
+        // Try to fetch server-provided config if available
+        try {
+          const res = await fetch('/api/config');
+          if (res.ok) {
+            const config = await res.json();
+            if (config.supabaseUrl && !config.supabaseUrl.includes('your-project-id')) {
+              supabaseUrl = config.supabaseUrl;
+            }
+            if (config.supabaseAnonKey && !config.supabaseAnonKey.includes('your_supabase_anon_key')) {
+              supabaseAnonKey = config.supabaseAnonKey;
+            }
+          }
+        } catch (apiErr) {
+          console.warn('API /api/config unavailable, using default Supabase project credentials.');
+        }
 
+        // Check local override if any
         const storedOverride = localStorage.getItem('taskflow_supabase_config');
         if (storedOverride) {
           try {
@@ -33,16 +72,13 @@ async function getSupabase() {
           }
         }
 
-        if (!supabaseUrl || !supabaseAnonKey || supabaseAnonKey.includes('your_supabase_anon_key')) {
-          console.warn('⚠️ Supabase credentials not set in .env. Please update .env with your Supabase URL and Anon Key.');
+        const libraryReady = await waitForSupabaseLibrary();
+        if (!libraryReady || !window.supabase) {
+          console.error('Supabase client library failed to load.');
+          return null;
         }
 
-        if (window.supabase) {
-          supabaseInstance = window.supabase.createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseAnonKey || 'placeholder');
-        } else {
-          console.error('Supabase client library not loaded on window.');
-        }
-
+        supabaseInstance = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
         return supabaseInstance;
       } catch (err) {
         console.error('Failed to initialize Supabase client:', err);
@@ -110,7 +146,7 @@ function updateThemeIcon(theme) {
     btn.innerHTML = `
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="12" x2="12" y2="3"></line>
         <line x1="12" y1="21" x2="12" y2="23"></line>
         <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
         <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
